@@ -4,6 +4,6 @@ services:
   mongodb:
     image: mongo:latest
     environment:
-      - MONGODB_DATABASE="nest"
+      - MONGODB_DATABASE="chat_service"
     ports:
       - 27017:27017

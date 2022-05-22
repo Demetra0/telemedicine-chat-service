@@ -1,33 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-
-import { IoAdapter } from '@nestjs/platform-socket.io';
-import { ServerOptions } from 'socket.io';
+import { Logger } from '@nestjs/common';
 import { AppConfigService } from './config/app/config.service';
-
-export class SocketAdapter extends IoAdapter {
-  createIOServer(
-    port: number,
-    options?: ServerOptions & {
-      namespace?: string;
-      server?: any;
-    },
-  ) {
-    return super.createIOServer(port, { ...options, cors: true });
-  }
-}
+import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { ValidationPipe } from './common/pipes/validation.pipe';
+import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
 
   app.setGlobalPrefix('api');
-
-  app.useWebSocketAdapter(new SocketAdapter(app));
+  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   const appConfig: AppConfigService = app.get(AppConfigService);
-  await app.listen(appConfig.port);
-
-  console.log(`Server started on port ${appConfig.port}`);
+  await app.listen(appConfig.port, () =>
+    Logger.log(`🚀 Server started on port ${appConfig.port}`),
+  );
 }
 
 bootstrap();

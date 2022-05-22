@@ -1,18 +1,23 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ChatModule } from './modules/chat/chat.module';
+import { ChatsModule } from './modules/chats/chats.module';
 import { AppConfigModule } from './config/app/config.module';
-import { MessageModule } from './modules/message/message.module';
-import { ChatGateway } from './chat.gateway';
+import { DBConfigModule } from './config/database/config.module';
+import { MongoDataBaseProviderModule } from './providers/database/mongo/provider.module';
+import { MessagesModule } from './modules/messages/messages.module';
+import { ReadChatsModule } from './modules/read-chats/read-chats.module';
+import { OnlineUsersModule } from './modules/online-users/online-users.module';
 
 @Module({
   imports: [
     AppConfigModule,
-    MongooseModule.forRoot('mongodb://localhost:27017/nest'),
-    ChatModule,
-    MessageModule,
+    DBConfigModule,
+    MongoDataBaseProviderModule,
+    ChatsModule,
+    MessagesModule,
+    ReadChatsModule,
+    OnlineUsersModule,
   ],
   controllers: [],
-  providers: [ChatGateway],
+  providers: [],
 })
 export class AppModule {}
